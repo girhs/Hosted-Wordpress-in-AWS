@@ -1,0 +1,164 @@
+https://miro.medium.com/v2/resize:fit:1400/1*LTPMxkiZP3JpCPRbWzESAA.gif
+
+📋 Prerequisites
+📌 AWS Account
+📌 Basic Understanding of Linux
+📌 Basic Understanding of EC-2, AWS Services
+Throughout this project, I embarked on an enlightening journey of creating and hosting my very own WordPress website on AWS EC2. With a goal to establish a robust online presence, I sought to harness the power of Amazon Web Services (AWS) Elastic Compute Cloud (EC2) to ensure scalability, performance, and security for my website.
+
+In this comprehensive guide, I will walk you through the process of creating and hosting your very own WordPress website on AWS EC2. By the end of this journey, you will get to know about the skills and knowledge to set up a robust, secure, and efficient website that can handle a range of demands, from personal blogs to large-scale business websites.
+
+Key Topics Covered
+Step 1: Understanding AWS and EC2:
+
+To kickstart the project, I delved into the world of AWS and familiarized myself with the EC2 service. I learned about the advantages of cloud infrastructure and how EC2 instances offer the flexibility to adapt to varying computing requirements.
+
+Step 2: Setting up an AWS Account: Creating an AWS account was the foundation of this endeavor. I carefully navigated the account creation process, considering the essential factors to ensure a smooth journey ahead.
+
+Step 3: Launching an EC2 Instance: With my AWS account ready, I took the leap and launched an EC2 instance tailored to my website’s specific needs. I explored various instance types and configurations to strike the right balance between performance and cost.
+
+Step 4: Securing Your EC2 Instance: Security was paramount for my website. I implemented best practices to secure my EC2 instance, safeguarding it against potential threats and unauthorized access.
+
+Step 5: Preparing the Environment: Before diving into WordPress, I prepared the environment by configuring a database and establishing connections to my EC2 instance. These preparatory steps set the stage for a seamless WordPress installation.
+
+Step 6: Installing WordPress: The heart of my website, WordPress, was installed following a step-by-step guide. This process was surprisingly straightforward, even for someone like me with limited prior experience.
+
+🪜Steps I followed
+Creating an Instance
+1. Login into your AWS console and sear for “EC2” and open it.
+
+2. On the left Panel, click on “Instances”.
+
+3. And click on “Launch Instance”.
+
+4. Let’s give a Instance name as “Wordpress Server”.
+
+5. Here, I am using “Ubuntu” as my Operating System. [You can choose your own Operating System.]
+
+6. Select Instance Type as “t2.micro”
+
+7. Scroll Down, and click on “Create new key Pair”.
+
+8. Give a key pair name as “mywordpress”, choose Private key file format as “.pem” (if you are a mac user) & if you are a windows user, choose “.ppk”(Different steps to follow for .ppk files i.e, for windows users) and “Create a key pair”.
+
+9. Now, in the “Network Settings” give permissions to “HTTPS & HTTP” traffic from the Internet.
+
+10. Keep rest of all the configurations as it is, and click on “Launch Instance”.
+
+Assign Elastic IP Address
+1. On the left Panel, Scroll Down and below the “Network & Security” click on “Elastic IPs”.
+
+2. On the top-right, click on “Allocate Elastic IP address”. In the Tags , add “Name” — “wordpressIP” & click on “Allocate”.
+
+3. Now to associate this created “EIPA”, select the create “ELIP”, click on “Actions” and click on “Allocate Elastic IP address”.
+
+4. Choose “Instance” and click on “Associate”.
+
+5. Now, you can see a new Public IP address is Associated to the Instance.
+
+
+Connect your Instance with SSH
+For Windows Users
+
+For Windows users other methods to be followed. I will show you, How I can do this using windows.
+
+If you downloaded the PPK file format, jump to the server accessing step.
+
+I assume that you already have PuTTY, and if you don’t, then download it from here: Download PuTTY. Next, you have to launch PuTTYgen.
+
+1. Search PuTTYgen on your Windows search bar and click Open.
+
+2. Click Load and select the PEM file you previously downloaded while launching the EC2 instance.
+
+3. Click the Save private key and download the PPK file to your desktop.
+
+4. Open PuTTY and type ec2-user@yourIPaddress. Ec2-user will be the Default user. Replace the public IP with your server IP. (You can find it from the AWS platform where you launched the EC2 Instance).
+
+5. Next, navigate to Connection > SSH > Auth, browse, and select the PPK file you recently downloaded from the AWS server or PuTTYgen.
+
+6. Click Open and access your virtual cloud server(EC2) via PuTTY.
+
+Here you can see I have successfully accessed my AWS server via PuTTy.
+
+For MAC Users
+
+For Now, I am using Mac, so following are the steps for Mac users only. Further steps include, “Connecting your instance & create Associate SSH Connection”.
+
+Open your Mac Terminal, and change the drive to the location where your key pair has been saved. In my case, it is “/Downloads” command : cd Downloads
+command : chmod 400 mywordpress.pem
+Select your instance, click on Connect and click on “SSH Client” and follow the steps and connect with your instance.
+
+Installing a Apache Webserver on your instance
+1. Open the terminal write the command :- sudo apt install Apache2
+
+2. To check if your server has been installed successfully, go to your console copy your public ip-address of your instance and search in the new tab as http://[your public ip address]
+
+3. So, we have successfully installed Apache2 Server.
+
+Install PHP
+Now, we have to install php on our instance, because wordpress is built on php
+
+1. open your terminal and type command :- sudo apt install php libapache2-mod-php php-mysql
+
+2. Now, to install MYSQL server for the database, type command :- sudo apt install mysql-server
+
+So, here is an interested thing,, here I am going to change Mysql authentication plugin to Mysql native password, so that we can login to the mysql server with a normal Password. This is what we need in order to install Wordpress.
+
+Logging into Mysql
+1. Login to Mysql server, Command :- sudo mysql -u root
+
+2. Change authentication plugin to mysql_native_password (Put whatever password you like to set and change the password to something strong), Command :- ALTER USER ‘root’@’localhost’ IDENTIFIED WITH mysql_native_password by ‘Yourpassword’;
+
+3. Create a new database user for wordpress (change the password to something strong), Command :- CREATE USER ‘wp_user’@localhost IDENTIFIED BY ‘Yourpassword’;
+
+4. Create a database for wordpress. Command :- CREATE DATABASE wp;
+
+5. Grant all privilges on the database ‘wp’ to the newly created user. Command :- GRANT ALL PRIVILEGES ON wp.* TO ‘wp_user’@localhost;
+
+6. We are done with the configuring Mysql on the server. Click Ctrl+D to get our from the Mysql window.
+
+Installing Wordpress
+1. Change your directory to /tmp, Command :- cd /tmp
+
+2. Open a new tab and go to this website : — https://wordpress.org/download./ and Right Click on “Download .tar.gz” and Copy the link
+
+3. Open the Terminal and type the Command :- wget https://wordpress.org/latest.tar.gz
+
+4. If you type command :- ls , you can see zip file is there
+
+5. To unzip the file, type command :- tar -xvf latest.tar.gz
+
+6. And if you type command :- ls , then you can see a new folder called as “Wordpress”
+
+7. Now, to move this folder to the document root of the Apache, type. Command :- sudo mv wordpress/ /var/www/html
+
+8. Now if you change directory to html and type ls you can see Wordpress has successfully moved.
+
+9. Open the Ubuntu page, and after your public ip address type /wordpress and you will be redirected to this page. Click on ‘Let’s Go’.
+
+10. From this page, I need to configure my Data Base. So I filled the information accordingly, Kindly fill the login details according to the steps mention above, (Step no.2,3) given in the Logging into Mysql section.
+
+11. Now, I am getting this error, so I have copied this code and opened my terminal.
+
+12. I have changed my directory and perform executed following commands :- cd /var/www/html.
+
+then, type command :- ls ; you can see “wordpress” directory. so, again cd to wordpress, so Command :- cd wordpress.
+
+13. Here, I am going to create a file called nano.php ; command :- nano wp-config.php
+
+14. I have Pasted the error php code, copied from wordpress webiste, and I have pressed ctrl+x to save the nano file.
+
+15. when I refresh the wordpress website, volaaa! wordpress page is ready for further configuration.
+
+16. I have given my website name and put all the necessary information.
+
+17. After installing the wordpress, I have logged in with my username and password and Yes, I have successfully installed the wordpress.
+
+18. And Now, My wordpress is ready to use.
+
+Conclusion & My Learnings :
+Through this project, I have gained a comprehensive understanding of creating and hosting a WordPress website on AWS EC2. 
+It has empowered me with the skills to take control of my online presence and leverage the remarkable capabilities of AWS to build scalable and secure websites.
+Whether you are a blogger, a business owner, or a developer, 
+I hope my experience and the knowledge gained from this project will inspire you to embark on your own journey of building and hosting your WordPress website 
+on AWS EC2.
